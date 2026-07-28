@@ -32,7 +32,7 @@ function App() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/auth/me", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
           credentials: "include"
         });
         const res = await response.json();
