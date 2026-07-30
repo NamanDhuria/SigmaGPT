@@ -1,63 +1,72 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
+import { MyContext } from "./MyContext";
 
 function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        setError("");
+  const { setUser } = useContext(MyContext);
 
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({ email, password })
-            });
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
 
-            const res = await response.json();
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ email, password }),
+        },
+      );
 
-            if (!response.ok) {
-                setError(res.error || "Login failed");
-                return;
-            }
+      const res = await response.json();
 
-            navigate("/");
-        } catch (err) {
-            console.log(err);
-            setError("Something went wrong");
-        }
-    };
+      if (!response.ok) {
+        setError(res.error || "Login failed");
+        return;
+      }
 
-    return (
-        <div className="authContainer">
-            <form className="authForm" onSubmit={handleLogin}>
-                <h2>Login to SigmaGPT</h2>
-                {error && <p className="errorMsg">{error}</p>}
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <button type="submit">Login</button>
-                <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
-            </form>
-        </div>
-    );
+      setUser(res.user);
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+      setError("Something went wrong");
+    }
+  };
+
+  return (
+    <div className="authContainer">
+      <form className="authForm" onSubmit={handleLogin}>
+        <h2>Login to SigmaGPT</h2>
+        {error && <p className="errorMsg">{error}</p>}
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button type="submit">Login</button>
+        <p>
+          Don't have an account? <Link to="/signup">Sign up</Link>
+        </p>
+      </form>
+    </div>
+  );
 }
 
 export default Login;

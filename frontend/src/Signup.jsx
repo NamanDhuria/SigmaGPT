@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
+import { MyContext } from "./MyContext.jsx";
 
 function Signup() {
     const [name, setName] = useState("");
@@ -8,6 +9,8 @@ function Signup() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    const { setUser } = useContext(MyContext);
 
     const handleSignup = async (e) => {
         e.preventDefault();
@@ -28,6 +31,7 @@ function Signup() {
                 return;
             }
 
+            setUser(res.user);
             navigate("/");
         } catch (err) {
             console.log(err);
